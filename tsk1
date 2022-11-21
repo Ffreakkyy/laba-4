@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+int main() {
+    int arr[100][100], sizei, sizej;
+    printf("Enter the number of lines (<100): ");
+    while (scanf_s("%d", &sizei) != 1 || sizei <= 0 || sizei > 100 || getchar() != '\n') {
+        printf("Error. Input number. Number > 0\nEnter the number of lines (<100): ");
+        rewind(stdin);
+    }
+    printf("Enter number of columns (<100): ");
+    while (scanf_s("%d", &sizej) != 1 || sizej <= 0 || sizej > 100 || getchar() != '\n') {
+        printf("Error. Input number. Number > 0\nEnter number of columns: ");
+        rewind(stdin);
+    }
+    int operation;
+    printf("Choose an operation:\n1: Random\n2: Keyboard\nSelected operation: ");
+    while (!scanf_s("%d", &operation) || operation < 1 || operation>2 || getchar() != '\n') {
+        printf("Error.\tChoose an operation (1 or 2): ");
+        rewind(stdin);
+    }
+    switch (operation) {
+    case 1:
+        srand(time(NULL));
+        for (int i = 0; i < sizei; i++) {
+            for (int j = 0; j < sizej; j++) {
+                arr[i][j] = rand() % 20 - 9;
+            }
+        }
+        break;
+    case 2:
+        for (int i = 0; i < sizei; i++) {
+            for (int j = 0; j < sizej; j++) {
+                printf("Input %dx%d number: ", i + 1, j + 1);
+                while (!scanf_s("%d", &arr[i][j])) {
+                    printf("Error. Input number.\n");
+                    rewind(stdin);
+                }
+            }
+        }
+        printf("\n");
+        break;
+
+    }
+    for (int i = 0; i < sizei; i++) {
+        for (int j = 0; j < sizej; j++) {
+            printf("%5d\t", arr[i][j]);
+            if (j == sizej - 1)
+                printf("\n");
+        }
+    }
+    printf("\n");
+    int fl = 0, multiplication = 1, counter = 0;
+    for (int i = 0; i < sizei; i++) {
+        for (int j = 0; j < sizej; j++) {
+            if (arr[i][j] < 0)
+                fl++;
+            if (j == sizej - 1 && fl == 0) {
+                for (int j = 0; j < sizej; j++) {
+                    multiplication *= arr[i][j];
+                }
+                printf("Multiplication %d line=%d\n", i + 1, multiplication);
+                counter++;
+                multiplication = 1;
+            }
+        }
+        fl = 0;
+    }
+    if (counter == 0)
+        printf("All rows have a negative number or all numbers are equal to one.\n");
+    int sum = 0, maxSum = -2147483648;
+    fl = 1;
+    if (sizei != sizej)
+        printf("The matrix is ​​not square.\n");
+    else {
+        for (int i = 1; i < sizei; i++) {
+            for (int b = i; b < sizei; b++) {
+                for (int j = b - fl; j < sizej; j++) {
+                    sum += arr[b][j];
+                    break;
+                }
+            }
+            if (sum > maxSum)
+                maxSum = sum;
+            sum = 0;
+            fl++;
+        }
+        fl = 0;
+        for (int j = 1; j < sizej; j++) {
+            for (int b = 0; b < sizei; b++) {
+                for (int a = j + fl; a < sizej; a++) {
+                    sum += arr[b][a];
+                    fl++;
+                    break;
+                }
+            }
+            fl = 0;
+            if (sum > maxSum)
+                maxSum = sum;
+            sum = 0;
+        }
+        printf("\nMaximum amount: %d\n", maxSum);
+    }
+    return 0;
+}
